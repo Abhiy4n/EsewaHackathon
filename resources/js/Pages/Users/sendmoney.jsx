@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
+import { router } from "@inertiajs/react";
 import GlobalHeader from "./globalHeader.jsx";
 
 /* ─── Lucide icons (inline SVG — no dep needed) ─── */
@@ -523,6 +524,9 @@ export default function EsewaSendMoney({ onRound2, onBack, onCompleted }) {
   const [manualIn, setManualIn] = useState('');
   const [activeTag, setActiveTag] = useState(null);
 
+  // tutorial step: 1 = highlight left panel, 2 = highlight right amount panel, 0 = done
+  const [tutStep, setTutStep] = useState(1);
+
   // overlay states
   const [showConf, setShowConf] = useState(false);
   const [showScam, setShowScam] = useState(false);
@@ -565,6 +569,8 @@ export default function EsewaSendMoney({ onRound2, onBack, onCompleted }) {
     } else {
       setRec({ name: 'Ravi Das', num: '9800000000', init: 'R', color: '#f05151' });
     }
+    // advance tutorial: contact chosen → highlight amount panel
+    if (tutStep === 1) setTutStep(2);
   };
 
   const clearRec = () => {
@@ -580,6 +586,7 @@ export default function EsewaSendMoney({ onRound2, onBack, onCompleted }) {
   /* ── Flow ── */
   const openConf = () => {
     if (!rec || parseFloat(amt) <= 0) return;
+    setTutStep(0); // tutorial complete
     setShowConf(true);
   };
 
@@ -603,7 +610,11 @@ export default function EsewaSendMoney({ onRound2, onBack, onCompleted }) {
     setShowResult(false);
     setShowQrLoading(true);
     transitionTimer.current = setTimeout(() => {
-      onCompleted?.();
+      if (onCompleted) {
+        onCompleted();
+      } else {
+        router.get(typeof route !== 'undefined' ? route('qr-check') : '/qrCheck');
+      }
     }, 900);
   };
 
@@ -620,6 +631,7 @@ export default function EsewaSendMoney({ onRound2, onBack, onCompleted }) {
     setRec(null); setAmtState('0'); setSearch(''); setManualIn('');
     setShowConf(false); setShowScam(false); setShowWipe(false); setShowResult(false); setShowQrLoading(false);
     setCaughtName(false); setCaughtPin(false); setIntended('');
+    setTutStep(1); // restart tutorial
     if (transitionTimer.current) clearTimeout(transitionTimer.current);
     resultShown.current = false;
   };
@@ -669,6 +681,61 @@ export default function EsewaSendMoney({ onRound2, onBack, onCompleted }) {
         .proc-btn:not(:disabled):hover{opacity:.92;}
         .sec-hd{padding:8px 12px 3px;font-size:9px;font-weight:700;letter-spacing:.1em;color:#718096;text-transform:uppercase;display:flex;align-items:center;gap:5px;}
         .sec-hd::after{content:'';flex:1;height:1px;background:#e2e8f0;}
+
+        /* ── Tutorial overlay system ── */
+        .tut-dimmed { position:relative; }
+        .tut-dimmed::after {
+          content:''; position:absolute; inset:0; z-index:80;
+          background:rgba(10,13,17,0.72); pointer-events:all;
+          transition: opacity .3s;
+        }
+        .tut-highlight {
+          position:relative; z-index:90;
+          box-shadow: 0 0 0 3px #60bb46, 0 0 32px rgba(96,187,70,0.35) !important;
+          border-radius: inherit;
+        }
+        .tut-tooltip {
+          position:absolute; z-index:100; pointer-events:none;
+          background:#1a202c; color:#edf2f7;
+          border:1.5px solid #60bb46; border-radius:10px;
+          padding:10px 14px; font-size:12px; font-weight:500;
+          line-height:1.5; max-width:210px; white-space:normal;
+          box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+          animation: tutPop .22s cubic-bezier(.34,1.4,.64,1);
+        }
+        .tut-tooltip::before {
+          content:''; position:absolute; width:8px; height:8px;
+          background:#1a202c; border-left:1.5px solid #60bb46;
+          border-top:1.5px solid #60bb46; transform:rotate(45deg);
+        }
+        .tut-tooltip.tip-right { left:calc(100% + 14px); top:50%; transform:translateY(-50%); }
+        .tut-tooltip.tip-right::before { left:-5px; top:50%; transform:translateY(-50%) rotate(-45deg); }
+        .tut-tooltip.tip-bottom { top:calc(100% + 14px); left:50%; transform:translateX(-50%); }
+        .tut-tooltip.tip-bottom::before { top:-5px; left:50%; transform:translateX(-50%) rotate(45deg); border-left:none; border-right:1.5px solid #60bb46; border-top:1.5px solid #60bb46; }
+        .tut-step-badge {
+          display:inline-flex; align-items:center; gap:5px;
+          font-size:10px; font-weight:800; letter-spacing:.06em; text-transform:uppercase;
+          color:#60bb46; margin-bottom:5px;
+        }
+        .tut-step-badge span {
+          width:18px; height:18px; border-radius:50%; background:#60bb46;
+          color:#fff; display:flex; align-items:center; justify-content:center;
+          font-size:10px; font-weight:800;
+        }
+        @keyframes tutPop { from{opacity:0;transform:scale(.92) translateY(-50%)} to{opacity:1;transform:scale(1) translateY(-50%)} }
+        @keyframes tutPopB { from{opacity:0;transform:scale(.92) translateX(-50%)} to{opacity:1;transform:scale(1) translateX(-50%)} }
+        .tut-tooltip.tip-bottom { animation: tutPopB .22s cubic-bezier(.34,1.4,.64,1); }
+        .tut-dim-cover {
+          position:fixed; inset:0; z-index:79;
+          background:rgba(10,13,17,0.65);
+          pointer-events:none;
+          transition: opacity .3s;
+        }
+        @keyframes tut-pulse {
+          0%,100%{box-shadow:0 0 0 3px #60bb46,0 0 20px rgba(96,187,70,0.3)}
+          50%{box-shadow:0 0 0 5px #60bb46,0 0 40px rgba(96,187,70,0.5)}
+        }
+        .tut-highlight { animation: tut-pulse 2s ease-in-out infinite; }
       `}</style>
 
 
@@ -702,11 +769,29 @@ export default function EsewaSendMoney({ onRound2, onBack, onCompleted }) {
           flex: 1, overflow: 'hidden'
         }}>
 
+        {/* ── Tutorial dim cover (behind highlighted element) ── */}
+        {(tutStep === 1 || tutStep === 2) && (
+          <div className="tut-dim-cover" />
+        )}
+
           {/* LEFT PANEL */}
           <div style={{
             background: '#ffffff', borderRight: '1px solid #e2e8f0',
-            display: 'flex', flexDirection: 'column', overflow: 'hidden'
-          }}>
+            display: 'flex', flexDirection: 'column', overflow: 'hidden',
+            position: 'relative',
+            ...(tutStep === 1 ? { zIndex: 90 } : tutStep === 2 ? { zIndex: 10, filter: 'brightness(0.45)' } : {})
+          }}
+            className={tutStep === 1 ? 'tut-highlight' : ''}
+          >
+            {/* Step 1 tooltip */}
+            {tutStep === 1 && (
+              <div className="tut-tooltip tip-right" style={{ top: '38%' }}>
+                <div className="tut-step-badge"><span>1</span> Step 1 of 2</div>
+                <strong style={{ display:'block', marginBottom:3, color:'#fff', fontSize:13 }}>Select a Recipient</strong>
+                Search for a contact or pick someone from your recent list to send money to.
+                <div style={{ marginTop:8, fontSize:10, color:'#60bb46', fontWeight:600 }}>👆 Tap any contact to continue</div>
+              </div>
+            )}
             {/* Tabs */}
             <div style={{ display: 'flex', borderBottom: '1px solid #e2e8f0' }}>
               <div className={`tab${activeTab === 'mobile' ? ' on' : ''}`} onClick={() => setActiveTab('mobile')}>
@@ -797,7 +882,12 @@ export default function EsewaSendMoney({ onRound2, onBack, onCompleted }) {
           </div>
 
           {/* RIGHT PANEL */}
-          <div style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden', background: '#f5f7fd' }}>
+          <div style={{
+            display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden', background: '#f5f7fd',
+            position: 'relative',
+            ...(tutStep === 2 ? { zIndex: 90 } : {}),
+            ...(tutStep === 1 ? { filter: 'brightness(0.45)', pointerEvents: 'none' } : {}),
+          }}>
             {/* Recipient strip */}
             <div style={{
               color: 'white',
@@ -834,7 +924,9 @@ export default function EsewaSendMoney({ onRound2, onBack, onCompleted }) {
               )}
             </div>
 
+            {/* Amount + keypad box — highlighted in step 2 */}
             <div style={{
+              position: 'relative',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'center',
@@ -844,9 +936,36 @@ export default function EsewaSendMoney({ onRound2, onBack, onCompleted }) {
               width: 'fit-content',
               background: '#ffffff',
               borderRadius: 16,
-              boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03), 0 0 0 1px rgba(0,0,0,0.02)',
-              padding: '12px 6px'
+              boxShadow: tutStep === 2
+                ? '0 0 0 3px #60bb46, 0 0 40px rgba(96,187,70,0.4), 0 4px 6px -1px rgba(0,0,0,0.05)'
+                : '0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03), 0 0 0 1px rgba(0,0,0,0.02)',
+              padding: '12px 6px',
+              transition: 'box-shadow .3s',
+              animation: tutStep === 2 ? 'tut-pulse 2s ease-in-out infinite' : 'none',
             }}>
+
+            {/* Step 2 tooltip */}
+            {tutStep === 2 && (
+              <div className="tut-tooltip tip-bottom" style={{
+                top: 'calc(100% + 16px)', left: '50%',
+                transform: 'translateX(-50%)',
+                animation: 'tutPopB .22s cubic-bezier(.34,1.4,.64,1)',
+                maxWidth: 240
+              }}>
+                <div className="tut-step-badge"><span>2</span> Step 2 of 2</div>
+                <strong style={{ display:'block', marginBottom:3, color:'#fff', fontSize:13 }}>Enter the Amount</strong>
+                Use the keypad or quick chips to type the amount you want to send. Add a note or tag if you like, then tap <em style={{color:'#60bb46', fontStyle:'normal'}}>Proceed to Send</em>.
+                <div style={{ marginTop:8, fontSize:10, color:'#60bb46', fontWeight:600 }}>💡 Quick tip: always double-check the recipient name above!</div>
+                <button
+                  onClick={() => setTutStep(0)}
+                  style={{
+                    marginTop:10, width:'100%', background:'#60bb46', border:'none',
+                    borderRadius:6, color:'#fff', fontFamily:'inherit', fontSize:11,
+                    fontWeight:700, padding:'6px 0', cursor:'pointer'
+                  }}
+                >Got it — dismiss tutorial ✕</button>
+              </div>
+            )}
 
               {/* Amount section */}
               <div style={{

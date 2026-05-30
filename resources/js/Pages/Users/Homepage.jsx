@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { router } from "@inertiajs/react";
 
 const styles = `
   * { font-family: 'Roboto', sans-serif; box-sizing: border-box; }
@@ -163,7 +164,15 @@ function ArrowRight({ size = 12 }) {
 }
 
 // ── HEADER ─────────────────────────────────────────────────────────────────
-function Header({ onRegister }) {
+function Header({ onRegister, onLogin }) {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+
+    const handleLogin = (e) => {
+        e.preventDefault();
+        onLogin({ email, password });
+    };
+
     return (
         <header className="hp-header">
             <div className="hp-header-inner">
@@ -180,27 +189,39 @@ function Header({ onRegister }) {
                     </div>
                 </div>
                 <div className="hp-header-right">
-                    <div className="hp-header-right-top">
+                    <form onSubmit={handleLogin} className="hp-header-right-top">
                         <div className="hp-user-auth">
                             <div className="hp-user-id-container">
                                 <svg className="hp-auth-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
                                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" />
                                 </svg>
-                                <input type="text" placeholder="eSewa ID" />
+                                <input 
+                                    type="text" 
+                                    placeholder="eSewa ID" 
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    required
+                                />
                             </div>
                             <div className="hp-user-pass-container">
                                 <svg className="hp-auth-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
                                     <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
                                     <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                                 </svg>
-                                <input type="password" placeholder="Password" />
+                                <input 
+                                    type="password" 
+                                    placeholder="Password" 
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    required
+                                />
                             </div>
                         </div>
                         <div className="hp-buttons">
-                            <button className="hp-btn-login">Login</button>
-                            <button className="hp-btn-register" onClick={onRegister}>Register</button>
+                            <button type="submit" className="hp-btn-login">Login</button>
+                            <button type="button" className="hp-btn-register" onClick={onRegister}>Register</button>
                         </div>
-                    </div>
+                    </form>
                     <a href="#" className="hp-forgot">Forgot password?</a>
                 </div>
             </div>
@@ -342,9 +363,17 @@ export default function HomePage() {
         return () => tag.remove();
     }, []);
 
+    const handleLogin = ({ email, password }) => {
+        router.post(route('login'), { email, password });
+    };
+
+    const handleRegister = () => {
+        router.get(route('register'));
+    };
+
     return (
         <>
-            <Header onRegister={() => alert("Register clicked")} />
+            <Header onRegister={handleRegister} onLogin={handleLogin} />
             <NavBar />
             <Features />
             <CarouselList data={featuredServices} mainTitle="Featured Services" />

@@ -7,7 +7,7 @@ const Icon = ({ name, size = 15, style = {} }) => {
         "arrow-left":   <><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></>,
         "info":         <><circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="8" /></>,
         "alert-triangle": <><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></>,
-        "shield-alert": <><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></>,
+        "shield-alert": <><path d="M12   22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></>,
         "shield-check": <><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /><polyline points="9 12 11 14 15 10" /></>,
         "arrow-right":  <><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></>,
         "external-link":<><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" /><polyline points="15 3 21 3 21 9" /><line x1="10" y1="14" x2="21" y2="3" /></>,
@@ -496,8 +496,10 @@ export default function EsewaQr({ onHome = () => {} }) {
     const [showDelay, setShowDelay] = useState(false);
     const [showResult, setShowResult] = useState(false);
     const [shaking, setShaking]     = useState(null);
+    const [showTutorial, setShowTutorial] = useState(true);
 
     const pickQR = (n) => {
+        setShowTutorial(false); // dismiss tutorial on first QR tap
         setChosen(n);
         setShowDelay(true);
     };
@@ -518,6 +520,7 @@ export default function EsewaQr({ onHome = () => {} }) {
         setShowDelay(false);
         setShowResult(false);
         setShaking(null);
+        setShowTutorial(true);
     };
 
     const QR_CARDS = [
@@ -531,7 +534,7 @@ export default function EsewaQr({ onHome = () => {} }) {
             <GlobalHeader />
             <div style={{
                 fontFamily: "'Inter', sans-serif",
-                background: '#0a0d11', color: '#eef2f7',
+                background: '#f5f7ff', color: '#eef2f7',
                 fontSize: 13,
                 height: 'calc(100vh - 70px)',
                 overflow: 'hidden',
@@ -544,48 +547,136 @@ export default function EsewaQr({ onHome = () => {} }) {
                     @keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
                     .qr-card{width:200px;background:#111620;border:1.5px solid #1f2a3c;border-radius:12px;overflow:hidden;cursor:pointer;transition:all .2s;position:relative;display:flex;flex-direction:column;}
                     .qr-card:hover{border-color:#263248;transform:translateY(-3px);}
-                    .ico-btn{width:32px;height:32px;border-radius:8px;background:#1c2435;border:1px solid #1f2a3c;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#6b7a8f;transition:all .15s;}
-                    .ico-btn:hover{background:#1f2a3c;color:#eef2f7;}
-                `}</style>
+                    .ico-btn{width:32px;height:32px;border-radius:8px;background:#ffffff;border:1px solid #1f2a3c;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#6b7a8f;transition:all .15s;}
+                    .ico-btn:hover{background:#49bb46;color:#eef2f7;}
 
-                {/* Tutorial Banner */}
-                <div style={{
-                    height: 30, background: '#161c28', borderBottom: '1px solid #1f2a3c',
-                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                    padding: '0 16px', flexShrink: 0
-                }}>
-                    <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <span style={{
-                            background: '#5dbe3a', color: '#062000', fontSize: 9, fontWeight: 800,
-                            letterSpacing: '.1em', padding: '2px 7px', borderRadius: 99, marginRight: 8
-                        }}>TUTORIAL</span>
-                        <span style={{ fontSize: 11, color: '#6b7a8f', fontWeight: 500 }}>
-                            Step 3 of 3 — Spot the Fake QR Code
-                        </span>
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                        <div style={{ display: 'flex', gap: 3 }}>
-                            {[{ done: true }, { done: true }, { active: true }].map((s, i) => (
-                                <div key={i} style={{
-                                    width: 18, height: 3, borderRadius: 99,
-                                    background: s.done ? '#5dbe3a' : s.active ? 'rgba(93,190,58,.6)' : '#263248'
-                                }} />
-                            ))}
-                        </div>
-                        <button
-                            onClick={onHome}
-                            style={{ fontSize: 10, color: '#6b7a8f', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}
-                        >
-                            ← Home
-                        </button>
-                    </div>
-                </div>
+                    /* ── Tutorial system ── */
+                    @keyframes tut-fade-in { from{opacity:0} to{opacity:1} }
+                    @keyframes tut-pulse-glow {
+                        0%,100%{ box-shadow: 0 0 0 3px #60bb46, 0 0 28px rgba(96,187,70,0.35); }
+                        50%    { box-shadow: 0 0 0 5px #60bb46, 0 0 52px rgba(96,187,70,0.55); }
+                    }
+                    @keyframes tut-tooltip-in {
+                        from { opacity:0; transform: translateX(-50%) translateY(8px); }
+                        to   { opacity:1; transform: translateX(-50%) translateY(0); }
+                    }
+                    @keyframes tut-arrow-bounce {
+                        0%,100% { transform: translateY(0); }
+                        50%     { transform: translateY(-6px); }
+                    }
+                    .tut-dim-cover {
+                        position: fixed; inset: 0; z-index: 70;
+                        background: rgba(5,8,12,0.78);
+                        backdrop-filter: blur(2px);
+                        pointer-events: none;
+                        animation: tut-fade-in .35s ease;
+                    }
+                    .tut-spotlight {
+                        position: relative;
+                        z-index: 80;
+                        border-radius: 18px;
+                        animation: tut-pulse-glow 2.2s ease-in-out infinite;
+                        padding: 20px 24px 24px;
+                        background: rgba(17,22,32,0.55);
+                        overflow: visible;
+                    }
+                    .tut-tooltip-wrap {
+                        position: absolute;
+                        top: calc(100% + 16px);
+                        left: 50%;
+                        transform: translateX(-50%);
+                        z-index: 90;
+                        animation: tut-tooltip-in .3s cubic-bezier(.34,1.4,.64,1);
+                        width: 420px;
+                        pointer-events: all;
+                    }
+                    .tut-tooltip-box {
+                        background: #1a202c;
+                        border: 1.5px solid #60bb46;
+                        border-radius: 14px;
+                        padding: 16px 20px;
+                        box-shadow: 0 8px 32px rgba(0,0,0,0.45), 0 0 0 1px rgba(96,187,70,0.1);
+                    }
+                    /* Arrow pointing UP (tooltip is below the spotlight) */
+                    .tut-tooltip-arrow {
+                        width: 0; height: 0;
+                        margin: 0 auto;
+                        border-left: 10px solid transparent;
+                        border-right: 10px solid transparent;
+                        border-bottom: 10px solid #60bb46;
+                        position: relative;
+                    }
+                    .tut-tooltip-arrow::after {
+                        content: '';
+                        position: absolute;
+                        left: 50%;
+                        top: 3px;
+                        transform: translateX(-50%);
+                        border-left: 8px solid transparent;
+                        border-right: 8px solid transparent;
+                        border-bottom: 8px solid #1a202c;
+                    }
+                    .tut-bounce-arrow {
+                        text-align: center;
+                        font-size: 20px;
+                        animation: tut-arrow-bounce 1s ease-in-out infinite;
+                        color: #60bb46;
+                        margin-bottom: 6px;
+                    }
+                    .tut-dismiss-btn {
+                        margin-top: 12px;
+                        width: 100%;
+                        padding: 8px 0;
+                        background: transparent;
+                        border: 1px solid rgba(96,187,70,0.4);
+                        border-radius: 8px;
+                        color: #60bb46;
+                        font-family: inherit;
+                        font-size: 11px;
+                        font-weight: 700;
+                        letter-spacing: .04em;
+                        cursor: pointer;
+                        transition: background .15s;
+                    }
+                    .tut-dismiss-btn:hover { background: rgba(96,187,70,0.1); }
+                    .tut-step-pill {
+                        display: inline-flex; align-items: center; gap: 6px;
+                        background: rgba(96,187,70,0.12);
+                        border: 1px solid rgba(96,187,70,0.3);
+                        border-radius: 99px;
+                        padding: 3px 10px 3px 6px;
+                        font-size: 10px; font-weight: 800;
+                        letter-spacing: .06em; text-transform: uppercase;
+                        color: #60bb46; margin-bottom: 10px;
+                    }
+                    .tut-step-pill span {
+                        width: 16px; height: 16px; border-radius: 50%;
+                        background: #60bb46; color: #fff;
+                        display: flex; align-items: center; justify-content: center;
+                        font-size: 9px; font-weight: 900;
+                    }
+                    .qr-card-tut-hover {
+                        position: absolute; inset: 0;
+                        background: rgba(96,187,70,0.07);
+                        border-radius: inherit;
+                        display: flex; flex-direction: column;
+                        align-items: center; justify-content: center;
+                        opacity: 0; transition: opacity .2s;
+                        pointer-events: none;
+                        z-index: 2;
+                    }
+                    .qr-card:hover .qr-card-tut-hover { opacity: 1; }
+                `}</style>
 
                 {/* Sub-header */}
                 <div style={{
-                    height: 48, background: '#111620', borderBottom: '1px solid #1f2a3c',
+                    height: 48, background: '#60bb46', borderBottom: '1px solid #1f2a3c',
                     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                    padding: '0 16px', flexShrink: 0
+                    padding: '0 16px', flexShrink: 0,
+                    position: 'relative', zIndex: showTutorial ? 10 : 'auto',
+                    filter: showTutorial ? 'brightness(0.4)' : 'none',
+                    transition: 'filter .3s',
+                    pointerEvents: showTutorial ? 'none' : 'auto',
                 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                         <button className="ico-btn" onClick={onHome}><Icon name="arrow-left" size={15} /></button>
@@ -594,62 +685,109 @@ export default function EsewaQr({ onHome = () => {} }) {
                     <button className="ico-btn"><Icon name="info" size={15} /></button>
                 </div>
 
+                {/* ── Tutorial dim cover ── */}
+                {showTutorial && <div className="tut-dim-cover" />}
+
                 {/* Main content */}
                 <div style={{
                     display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                    flex: 1, padding: 20, gap: 0, overflow: 'hidden'
+                    flex: 1, padding: 20, gap: 0, overflow: 'visible'
                 }}>
-                    <div style={{ textAlign: 'center', maxWidth: 480, marginBottom: 28 }}>
-                        <div style={{
-                            display: 'inline-flex', alignItems: 'center', gap: 6,
-                            background: 'rgba(240,160,80,.1)', border: '1px solid rgba(240,160,80,.3)',
-                            color: '#f0a050', padding: '4px 12px', borderRadius: 99,
-                            fontSize: 10, fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase',
-                            marginBottom: 12
-                        }}>
-                            <Icon name="alert-triangle" size={11} /> Round 3 — QR Attack
-                        </div>
-                        <h2 style={{ fontSize: 22, fontWeight: 800, marginBottom: 6, letterSpacing: '-.03em', color: '#eef2f7' }}>
-                            Which QR is safe to scan?
-                        </h2>
-                        <p style={{ fontSize: 13, color: '#6b7a8f', lineHeight: 1.7 }}>
-                            You just bought goods from Sharma Kirana Pasal. Which QR should you scan? All three look identical at a glance. Tap the one you think is genuine.
-                        </p>
-                    </div>
-
-                    <div style={{ display: 'flex', gap: 16, marginBottom: 20 }}>
-                        {QR_CARDS.map(card => (
-                            <div
-                                key={card.id}
-                                className="qr-card"
-                                onClick={() => pickQR(card.id)}
-                                style={{ animation: shaking === card.id ? 'shake .35s ease' : 'none' }}
-                            >
-                                <div style={{
-                                    position: 'absolute', top: 8, left: 8, width: 20, height: 20,
-                                    background: 'rgba(0,0,0,.5)', borderRadius: '50%',
-                                    fontSize: 10, fontWeight: 700, display: 'flex', alignItems: 'center',
-                                    justifyContent: 'center', color: 'white'
-                                }}>{card.id}</div>
-                                <div style={{
-                                    background: 'white', padding: 14,
-                                    display: 'flex', alignItems: 'center', justifyContent: 'center'
-                                }}>
-                                    {card.svg}
-                                </div>
-                                <div style={{ padding: '10px 12px 12px' }}>
-                                    <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 2, color: '#eef2f7' }}>{card.merchant}</div>
-                                    <div style={{ fontSize: 11, color: '#6b7a8f', fontFamily: 'monospace', wordBreak: 'break-all', lineHeight: 1.4 }}>
-                                        {card.url}
+                    {/* ── Spotlight wrapper: title + QR cards highlighted during tutorial ── */}
+                    <div
+                        className={showTutorial ? 'tut-spotlight' : ''}
+                        style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+                    >
+                        {/* Tutorial tooltip floats below the QR cards */}
+                        {showTutorial && (
+                            <div className="tut-tooltip-wrap">
+                                {/* Arrow pointing UP toward the QR cards */}
+                                <div className="tut-bounce-arrow">↑</div>
+                                <div className="tut-tooltip-arrow" />
+                                <div className="tut-tooltip-box">
+                                    <div className="tut-step-pill"><span>!</span> Tutorial</div>
+                                    <div style={{ fontSize: 15, fontWeight: 800, color: '#fff', marginBottom: 6, letterSpacing: '-.01em' }}>
+                                        Spot the Fake QR Code
                                     </div>
+                                    <p style={{ fontSize: 12, color: '#94a3b8', lineHeight: 1.65, marginBottom: 4 }}>
+                                        Above are <strong style={{ color: '#e2e8f0' }}>3 QR codes</strong> — only <strong style={{ color: '#60bb46' }}>one is genuine</strong>.
+                                        Scammers often place fake QR stickers over real ones. Your job is to inspect each code's URL carefully and tap the one you trust.
+                                    </p>
+                                    <div style={{
+                                        background: 'rgba(96,187,70,0.08)', border: '1px solid rgba(96,187,70,0.2)',
+                                        borderRadius: 8, padding: '8px 12px', fontSize: 11, color: '#86efac',
+                                        lineHeight: 1.6, marginBottom: 2
+                                    }}>
+                                        💡 <strong>Tip:</strong> Read the URL shown under each QR. Look for typos, extra hyphens, or unofficial domains — these are red flags.
+                                    </div>
+                                    <button className="tut-dismiss-btn" onClick={() => setShowTutorial(false)}>
+                                        Got it — let me try ✕
+                                    </button>
                                 </div>
                             </div>
-                        ))}
+                        )}
+
+                        {/* Title */}
+                        <div style={{ textAlign: 'center', maxWidth: 480, marginBottom: 28 }}>
+                            <h2 style={{ fontSize: 22, fontWeight: 850, marginBottom: 6, letterSpacing: '-.03em', color: showTutorial ? '#ffffff' : '#000000' }}>
+                                Which QR is safe to scan?
+                            </h2>
+                            <p style={{ fontSize: 13, color: showTutorial ? '#94a3b8' : '#6b7a8f', lineHeight: 1.7 }}>
+                                You just bought goods from Sharma Kirana Pasal. Tap the one you think is genuine.
+                            </p>
+                        </div>
+
+                        {/* QR Cards */}
+                        <div style={{ display: 'flex', gap: 16, marginBottom: 20 }}>
+                            {QR_CARDS.map(card => (
+                                <div
+                                    key={card.id}
+                                    className="qr-card"
+                                    onClick={() => pickQR(card.id)}
+                                    style={{ animation: shaking === card.id ? 'shake .35s ease' : 'none' }}
+                                >
+                                    {/* Card number badge */}
+                                    <div style={{
+                                        position: 'absolute', top: 8, left: 8, width: 20, height: 20,
+                                        background: 'rgba(0,0,0,.5)', borderRadius: '50%',
+                                        fontSize: 10, fontWeight: 700, display: 'flex', alignItems: 'center',
+                                        justifyContent: 'center', color: 'white', zIndex: 3
+                                    }}>{card.id}</div>
+
+                                    {/* Tutorial hover hint — visible on hover while tutorial is active */}
+                                    {showTutorial && (
+                                        <div className="qr-card-tut-hover">
+                                            <div style={{
+                                                background: 'rgba(17,22,32,0.9)', border: '1px solid rgba(96,187,70,0.4)',
+                                                borderRadius: 8, padding: '6px 10px', textAlign: 'center',
+                                                maxWidth: 160, pointerEvents: 'none'
+                                            }}>
+                                                <div style={{ fontSize: 16, marginBottom: 3 }}>🔍</div>
+                                                <div style={{ fontSize: 10, fontWeight: 700, color: '#60bb46', marginBottom: 2 }}>Inspect this QR</div>
+                                                <div style={{ fontSize: 9, color: '#94a3b8', lineHeight: 1.4 }}>
+                                                    Check the URL below it carefully before tapping
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    <div style={{
+                                        background: 'white', padding: 14,
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center'
+                                    }}>
+                                        {card.svg}
+                                    </div>
+                                    <div style={{ padding: '10px 12px 12px' }}>
+                                        <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 2, color: '#eef2f7' }}>{card.merchant}</div>
+                                        <div style={{ fontSize: 11, color: '#6b7a8f', fontFamily: 'monospace', wordBreak: 'break-all', lineHeight: 1.4 }}>
+                                            {card.url}
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
 
-                    <div style={{ fontSize: 12, color: '#4a5568', textAlign: 'center' }}>
-                        Look carefully at the <strong style={{ color: '#6b7a8f' }}>URL below each QR</strong> before tapping
-                    </div>
                 </div>
 
                 {showDelay && !showResult && (
