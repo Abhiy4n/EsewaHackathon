@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Head, Link, usePage } from '@inertiajs/react';
+import logo from "../assets/logo.png"
 import axios from 'axios';
 
 const scams = [
@@ -125,6 +126,8 @@ const MAX_POINTS = scams.length * POINTS_PER_WIN;
 const style = `
   * { box-sizing: border-box; }
 
+    .hp-logo img { height: 30px; width: auto; display: block; }
+
   .fa-page {
     min-height: 100vh;
     background: #f3f4f6;
@@ -135,7 +138,7 @@ const style = `
   /* ── Header ── */
   .fa-header {
     background: #111827;
-    height: 54px;
+    height: 74px;
     padding: 0 24px;
     display: flex;
     align-items: center;
@@ -786,10 +789,8 @@ export default function FraudAwareness({ scoreboard = null, completedAttempts = 
 
             <header className="fa-header">
                 <div className="fa-header-left">
-                    <div className="fa-header-logo">🛡</div>
-                    <div>
-                        <div className="fa-header-brand">eSewa Nepal</div>
-                        <div className="fa-header-sub">Cybersecurity Hub</div>
+                    <div className="hp-logo">
+                        <img src={logo} alt="esewa logo" />
                     </div>
                 </div>
                 <nav className="fa-header-nav">
