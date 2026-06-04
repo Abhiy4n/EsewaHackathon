@@ -1,8 +1,18 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { router } from "@inertiajs/react";
+import logo from "../assets/logo.png";
+import banner1 from "../assets/banner1.webp";
+import banner2 from "../assets/banner2.webp";
+import search from "../assets/searchIcon.png";
+import sendmoney from "../assets/sendmoney.png";
+import loadmoney from "../assets/loadmoney.png";
+import remittance from "../assets/remittance.png";
+import banktransfer from "../assets/banktransfer.png";
+import mobiletopup from "../assets/mobiletopup.png";
 
 const styles = `
   * { font-family: 'Roboto', sans-serif; box-sizing: border-box; }
+body{background: #f5f6fb;}
 
   /* ── HEADER ── */
   .hp-header {
@@ -16,14 +26,10 @@ const styles = `
   }
   .hp-header-left { display: flex; gap: 58px; flex: 1; align-items: center; }
   .hp-logo { display: flex; align-items: center; gap: 2px; flex-shrink: 0; }
-  .hp-logo-icon {
-    background: #60bb46; color: white; font-weight: 900; font-size: 18px;
-    width: 28px; height: 28px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-  }
+  .hp-logo img { height: 30px; width: auto; display: block; }
   .hp-logo-text { color: white; font-weight: 700; font-size: 18px; letter-spacing: -0.5px; }
   .hp-search-wrap { flex: 1; max-width: 470px; position: relative; }
-  .hp-sch-icon { position: absolute; height: 16px; width: 16px; top: 8px; left: 10px; color: #888; }
+  .hp-sch-icon { position: absolute; height: 16px; width: 16px; top: 10px; left: 10px; color: #888; }
   .hp-search-wrap input {
     width: 100%; background: #28323c; border: none; color: white;
     padding: 7px 14px 7px 34px; font-size: 13px; outline: none; border-radius: 6px;
@@ -85,27 +91,18 @@ const styles = `
     flex: 1; height: 100%; border-radius: 5px;
     box-shadow: 0 1px 6px 1px #e6eaf8; overflow: hidden; position: relative;
   }
+  .hp-slide-track { display: flex; height: 100%; transition: transform 3s ease; }
   .hp-slide {
     width: 100%; height: 100%; display: flex; align-items: center;
-    justify-content: center; transition: background 0.5s ease;
+    justify-content: center; flex: 0 0 50%;
   }
-  .hp-slide-placeholder { color: white; font-size: 1.5rem; font-weight: 700; opacity: 0.5; }
-  .hp-slide-dots {
-    position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
-    display: flex; gap: 6px;
-  }
-  .hp-dot {
-    width: 8px; height: 8px; border-radius: 50%;
-    background: rgba(255,255,255,0.5); border: none; cursor: pointer; padding: 0;
-  }
-  .hp-dot.active { background: white; }
 
   /* ── CAROUSEL CARDS ── */
-  .hp-service-container { width: 1150px; margin: 20px auto; padding: 10px; }
+    .hp-service-container { width: 1150px; margin: 20px auto; padding: 10px; }
   .hp-service-header {
     display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;
   }
-  .hp-section-title { font-weight: 700; font-size: 15px; color: #1a1a1a; margin: 0; }
+  .hp-section-title { font-weight: 550; font-size: 14px; color: #3f3f3f; margin: 0; }
   .hp-view-more-btn {
     font-size: 13px; color: #4e9a39; background: #dff1da; border-radius: 6px;
     padding: 5px 14px; text-decoration: none; cursor: pointer; white-space: nowrap;
@@ -114,12 +111,13 @@ const styles = `
   .hp-view-more-btn:hover { background: #60bb46; color: #fff; }
   .hp-card-container {
     background: #ffffff; padding: 16px; border-radius: 12px;
-    display: flex; gap: 14px; position: relative;
+    display: flex; gap: 20px; position: relative;
     box-shadow: 0 1px 6px rgba(0,0,0,0.07);
   }
   .hp-card {
     position: relative; display: flex; flex-direction: column; width: 20%;
-    border-radius: 5px; overflow: hidden; border: 1px solid #ebebeb;
+    gap: 10px;
+    border-radius: 5px; overflow: hidden; border: 1px solid #ebebeb; background: #f5f6fb;
     box-shadow: 0 1px 4px rgba(0,0,0,0.06); transition: box-shadow 0.2s, transform 0.2s;
   }
   .hp-card:hover { box-shadow: 0 4px 16px rgba(61,187,110,0.13); transform: translateY(-2px); }
@@ -130,7 +128,7 @@ const styles = `
     white-space: nowrap; line-height: 1.6;
   }
   .hp-card-image {
-    background: #f5f7fd; display: flex; align-items: center; justify-content: center;
+    background: #ffffff; display: flex; align-items: center; justify-content: center;
     padding: 24px 16px 20px; margin: 17px auto 0; width: 80px; height: 67px;
     border-radius: 63% 37% 30% 70% / 50% 45% 55% 50%;
   }
@@ -141,17 +139,17 @@ const styles = `
     justify-content: space-between; align-items: center;
     height: 100px; gap: 20px; padding: 10px; width: 100%;
   }
-  .hp-card-title { margin: 0; font-size: 13px; font-weight: 600; color: #1a1a1a; text-align: center; line-height: 1.35; }
-  .hp-card-link { font-size: 13px; color: #60bb46; font-weight: 550; text-decoration: none; }
+  .hp-card-title { margin: 5px 0 0 0; font-size: 11px; font-weight: 550; color: #4d4d4d; text-align: center; line-height: 1.35; }
+  .hp-card-link { font-size: 12px; color: #60bb46; font-weight: 550; text-decoration: none; }
   .hp-card-link:hover { text-decoration: underline; }
   .hp-carousel-arrow {
-    position: absolute; right: -18px; top: 50%; transform: translateY(-50%);
-    width: 45px; height: 45px; background: #ffffff; border: 1.5px solid #e0e0e0;
+    position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+    width: 40px; height: 40px; background: #ddffd9;
     border-radius: 50%; display: flex; align-items: center; justify-content: center;
     cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.10); z-index: 10;
-    transition: background 0.18s; color: #555;
+    transition: background 0.30s; color: #29920f;
   }
-  .hp-carousel-arrow:hover { background: #f0faf4; }
+  .hp-carousel-arrow:hover { background: #60bb44; color: white; }
 
   /* ── TUTORIAL OVERLAY ── */
   .hp-tutorial-overlay {
@@ -169,7 +167,7 @@ const styles = `
     z-index: 110 !important;
     box-shadow: 0 0 25px 6px rgba(96, 187, 70, 0.9) !important;
     border: 2px solid #60bb46 !important;
-    background: #ffffff !important;
+    background: #f5f6fb !important;
   }
 `;
 
@@ -189,13 +187,10 @@ function Header() {
             <div className="hp-header-inner">
                 <div className="hp-header-left">
                     <div className="hp-logo">
-                        <span className="hp-logo-icon">e</span>
-                        <span className="hp-logo-text">Sewa</span>
+                        <img src={logo} alt="esewa-logo" />
                     </div>
                     <div className="hp-search-wrap">
-                        <svg className="hp-sch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-                            <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" />
-                        </svg>
+                        <img src={search} className="hp-sch-icon" alt="Search Icon" />
                         <input type="text" placeholder="Search services/merchant by tags (e.g. adsl)" />
                     </div>
                 </div>
@@ -233,19 +228,47 @@ const featureItems = [
 ];
 
 const slides = [
-    "linear-gradient(135deg, #1a9be6 0%, #0dd3a0 100%)",
-    "linear-gradient(135deg, #f7971e 0%, #ffd200 100%)",
+    banner1,
+    banner2
 ];
 
 function Features() {
+    // Duplicate slides so we can move left-only and reset instantly when reaching the duplicate
+    const trackSlides = slides.concat(slides);
+    const slideCount = slides.length;
+    const total = trackSlides.length; // slideCount * 2
+
     const [current, setCurrent] = useState(0);
+    const [isResetting, setIsResetting] = useState(false);
 
     useEffect(() => {
         const timer = setInterval(() => {
-            setCurrent((prev) => (prev + 1) % slides.length);
+            setCurrent((prev) => Math.min(prev + 1, slideCount));
         }, 3000);
         return () => clearInterval(timer);
     }, []);
+
+    // Use transitionend to reliably detect end of slide animation and reset instantly
+    const trackRef = useRef(null);
+
+    function handleTransitionEnd(e) {
+        if (e.propertyName !== 'transform') return;
+        if (current === slideCount) {
+            setIsResetting(true);
+            setCurrent(0);
+            requestAnimationFrame(() => requestAnimationFrame(() => setIsResetting(false)));
+        }
+    }
+
+    const slidePercent = 100 / total;
+
+    const trackStyle = {
+        width: `${total * 100}%`,
+        transform: `translateX(-${current * slidePercent}%)`,
+        transition: isResetting ? 'none' : 'transform 3s ease',
+    };
+
+    const slideStyle = { flex: `0 0 ${slidePercent}%` };
 
     return (
         <aside className="hp-features-wrap">
@@ -261,16 +284,14 @@ function Features() {
                     </ul>
                 </div>
                 <div className="hp-slideshow">
-                    <div className="hp-slide" style={{ background: slides[current] }}>
-                        <p className="hp-slide-placeholder">Banner {current + 1}</p>
-                    </div>
-                    <div className="hp-slide-dots">
-                        {slides.map((_, i) => (
-                            <button
-                                key={i}
-                                className={`hp-dot${i === current ? " active" : ""}`}
-                                onClick={() => setCurrent(i)}
-                            />
+                    <div className="hp-slide-track" style={trackStyle} ref={trackRef} onTransitionEnd={handleTransitionEnd}>
+                        {trackSlides.map((s, idx) => (
+                            <div className="hp-slide" key={idx} style={slideStyle}>
+                                <img
+                                    src={s}
+                                    alt={`Banner ${ (idx % slideCount) + 1 }`}
+                                />
+                            </div>
                         ))}
                     </div>
                 </div>
@@ -278,6 +299,7 @@ function Features() {
         </aside>
     );
 }
+
 
 // ── CAROUSEL LIST ──────────────────────────────────────────────────────────
 function CarousalList({ data, MainTitle }) {
@@ -310,7 +332,11 @@ function CarousalList({ data, MainTitle }) {
                         >
                             <div className="hp-card-overlay"><p>{item.overlay}</p></div>
                             <div className="hp-card-image">
-                                <div className="hp-card-img-placeholder" />
+                                {item.image ? (
+                                    <img src={item.image} alt={item.title} />
+                                ) : (
+                                    <div className="hp-card-img-placeholder" />
+                                )}
                             </div>
                             <div className="hp-card-bottom">
                                 <p className="hp-card-title">{item.title}</p>
@@ -344,27 +370,27 @@ const paymentMethod = [
     {
         lm: {
             overlay: "Load Money",
-            image: "",
+            image: loadmoney,
             title: "Load Money",
         },
         sm: {
             overlay: "Send Money",
-            image: "",
+            image: sendmoney,
             title: "Send Money",
         },
         bt: {
             overlay: "Bank Transfer",
-            image: "",
+            image: banktransfer,
             title: "Bank Transfer",
         },
         rt: {
             overlay: "Remittance",
-            image: "",
+            image: remittance,
             title: "Remittance",
         },
         tp: {
             overlay: "Mobile TopUp",
-            image: "",
+            image: mobiletopup,
             title: "Mobile TopUp",
         }
     }

@@ -1,4 +1,5 @@
-import esewaLogo from '../assets/head.jpg';
+import esewaLogo from '../assets/logo.png';
+import search from "../assets/searchIcon.png";
 
 const styles = `
   @import "tailwindcss";
@@ -88,7 +89,7 @@ export default function Header() {
                     <div className="glheader-left">
                         <img className="gleslogo" src={esewaLogo} alt="eSewa Logo" />
                         <div className="glsearch-wrap">
-                            <img className="glsch-icon" src="src/assets/icons/searchIcon.png" alt="search" />
+                            <img className="glsch-icon" src={search} alt="search" />
                             <input className="glesewa-search" type="text" placeholder="Search services/merchant by tags (e.g. adsl)" />
                         </div>
                     </div>

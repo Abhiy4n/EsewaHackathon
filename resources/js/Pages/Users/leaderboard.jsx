@@ -3,6 +3,7 @@ import headImg     from '../assets/head.jpg';
 import shareyImg   from '../assets/sharey.jpg';
 import yellowImg   from '../assets/yellow.jpg';
 import blackcatImg from '../assets/blackcat.jpg';
+import logo from '../assets/logo.png';
 
 const AVATAR_IMAGES = [headImg, shareyImg, yellowImg, blackcatImg];
 
@@ -18,6 +19,8 @@ function accClass(acc) {
 const styles = `
   *, *::before, *::after { box-sizing: border-box; }
 
+  .hp-logo img { height: 30px; width: auto; display: block; }
+  
   .lb-page {
     min-height: 100vh;
     background: #ffffff;
@@ -28,7 +31,7 @@ const styles = `
   /* ── Header ── */
   .lb-header {
     background: #111827;
-    height: 54px;
+    height: 74px;
     padding: 0 24px;
     display: flex;
     align-items: center;
@@ -287,10 +290,8 @@ export default function Leaderboard({ leaders = [], currentUserStanding = null }
             {/* ── Header ── */}
             <header className="lb-header">
                 <div className="lb-header-left">
-                    <div className="lb-header-logo">🏆</div>
-                    <div>
-                        <div className="lb-header-brand">eSewa Nepal</div>
-                        <div className="lb-header-sub">Cybersecurity Hub</div>
+                    <div className="hp-logo">
+                        <img src={logo} alt="esewa logo" />
                     </div>
                 </div>
                 <nav className="lb-header-nav">

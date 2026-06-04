@@ -113,33 +113,33 @@ function DelayOverlay({ chosen, onProceed }) {
         }}>
             <style>{`
                 @keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
-                .delay-btn-en{background:#f0a050!important;color:#1a0e00!important;cursor:pointer!important;}
+                .delay-btn-en{background:#60bb44!important;font-size:19px;color:#ffffff!important;cursor:pointer!important;}
                 .delay-btn-en:hover{opacity:.9;}
             `}</style>
             <div style={{
-                width: 380, background: '#111620', border: '1.5px solid #f0a050',
+                width: 380, background: '#111620', border: '1.5px solid #60bb44',
                 borderRadius: 16, overflow: 'hidden',
                 animation: 'slideUp .3s cubic-bezier(.34,1.2,.64,1)',
-                boxShadow: '0 0 60px rgba(240,160,80,.1)'
+                boxShadow: '0 0 60px #74f04e23'
             }}>
                 {/* Hero */}
                 <div style={{
-                    background: 'linear-gradient(135deg,#1a1508,#221c0a)',
-                    borderBottom: '1px solid rgba(240,160,80,.2)',
+                    background: '#111620',
+                    borderBottom: '1px solid #60bb44',
                     padding: '24px 22px 20px', display: 'flex', flexDirection: 'column',
                     alignItems: 'center', textAlign: 'center', gap: 12
                 }}>
                     <div style={{
                         width: 56, height: 56, borderRadius: 14,
-                        background: 'rgba(240,160,80,.12)', border: '1px solid rgba(240,160,80,.25)',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#f0a050'
+                        background: '#60bb44', border: '1px solid #60bb44',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white'
                     }}>
                         <Icon name="shield-alert" size={28} />
                     </div>
                     <div style={{ fontSize: 17, fontWeight: 800, letterSpacing: '-.02em', color: '#eef2f7' }}>
                         Verify before you scan
                     </div>
-                    <div style={{ fontSize: 12, color: 'rgba(240,160,80,.65)', lineHeight: 1.65, maxWidth: 300 }}>
+                    <div style={{ fontSize: 12, color: '#60bb44', lineHeight: 1.65, maxWidth: 300 }}>
                         You are about to pay a new merchant. QR codes can be physically swapped by scammers without the merchant noticing — take a moment to check the destination.
                     </div>
                 </div>
@@ -160,7 +160,7 @@ function DelayOverlay({ chosen, onProceed }) {
                                 <span style={{ color: '#6b7a8f' }}>{row.l}</span>
                                 <span style={{
                                     fontWeight: row.neutral ? 400 : 600,
-                                    color: row.neutral ? '#6b7a8f' : '#f0a050',
+                                    color: row.neutral ? '#6b7a8f' : '#60bb44',
                                     fontFamily: row.neutral ? 'monospace' : 'inherit',
                                     fontSize: row.neutral ? 11 : 12
                                 }}>{row.v}</span>
@@ -176,14 +176,14 @@ function DelayOverlay({ chosen, onProceed }) {
                             </svg>
                             <svg style={{ position: 'absolute', inset: 0, transform: 'rotate(-90deg)' }} viewBox="0 0 48 48">
                                 <circle cx="24" cy="24" r="20" fill="none"
-                                    stroke="#f0a050" strokeWidth="4"
+                                    stroke="#60bb44" strokeWidth="4"
                                     strokeDasharray="125.6" strokeDashoffset={offset}
                                     strokeLinecap="round"
                                 />
                             </svg>
                             <div style={{
                                 position: 'absolute', inset: 0, display: 'flex', alignItems: 'center',
-                                justifyContent: 'center', fontSize: done ? 11 : 14, fontWeight: 800, color: '#f0a050'
+                                justifyContent: 'center', fontSize: done ? 11 : 14, fontWeight: 800, color: '#60bb44'
                             }}>
                                 {done ? '✓' : rem}
                             </div>
@@ -197,7 +197,7 @@ function DelayOverlay({ chosen, onProceed }) {
                             </div>
                             <div style={{ height: 3, background: '#1f2a3c', borderRadius: 99, overflow: 'hidden', marginTop: 6 }}>
                                 <div style={{
-                                    height: '100%', background: '#f0a050', borderRadius: 99,
+                                    height: '100%', background: '#60bb44', borderRadius: 99,
                                     width: pct + '%', transition: 'width .1s linear'
                                 }} />
                             </div>
@@ -213,8 +213,8 @@ function DelayOverlay({ chosen, onProceed }) {
                             fontFamily: 'inherit', fontSize: 14, fontWeight: 700,
                             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                             transition: 'all .2s',
-                            background: done ? '#f0a050' : '#263248',
-                            color: done ? '#1a0e00' : '#4a5568',
+                            background: done ? '#60bb44' : '#263248',
+                            color: done ? '#60bb44' : '#4a5568',
                             cursor: done ? 'pointer' : 'not-allowed',
                             position: 'relative'
                         }}
@@ -237,7 +237,7 @@ function ResultOverlay({ chosen, onRetry, onHome }) {
 
     const LessonBox = ({ children }) => (
         <div style={{
-            background: '#0a1810', border: '1px solid rgba(93,190,58,.15)',
+            background: '#102218b2', border: '1px solid rgba(93,190,58,.15)',
             borderRadius: 8, padding: 12, marginBottom: 14,
             fontSize: 12, color: 'rgba(93,190,58,.65)', lineHeight: 1.7
         }}>{children}</div>
@@ -253,7 +253,7 @@ function ResultOverlay({ chosen, onRetry, onHome }) {
             <style>{`@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}`}</style>
             <div style={{
                 width: 360, background: '#111620', borderRadius: 16, overflow: 'hidden',
-                border: '1.5px solid #1f2a3c', animation: 'slideUp .3s cubic-bezier(.34,1.2,.64,1)',
+                border: '1.5px solid #040c1b', animation: 'slideUp .3s cubic-bezier(.34,1.2,.64,1)',
                 maxHeight: '90vh', overflowY: 'auto'
             }}>{children}</div>
         </div>
@@ -263,13 +263,13 @@ function ResultOverlay({ chosen, onRetry, onHome }) {
         <>
             <div style={{
                 padding: '22px 22px 18px', textAlign: 'center',
-                background: 'linear-gradient(135deg,#0a1e08,#112610)',
-                borderBottom: '1px solid rgba(93,190,58,.15)'
+                background: '#111620',
+                borderBottom: '1px solid #60bb44'
             }}>
                 <div style={{
                     width: 60, height: 60, borderRadius: '50%', display: 'flex',
                     alignItems: 'center', justifyContent: 'center', margin: '0 auto 14px',
-                    background: 'rgba(93,190,58,.12)', border: '1.5px solid rgba(93,190,58,.3)', color: '#5dbe3a'
+                    background: 'rgba(93, 190, 58, 0.1)', border: '1.5px solid rgb(110, 207, 75)', color: '#60bb44'
                 }}>
                     <Icon name="shield-check" size={28} />
                 </div>
@@ -328,9 +328,9 @@ function ResultOverlay({ chosen, onRetry, onHome }) {
                 <button
                     onClick={() => setPhase('ignored')}
                     style={{
-                        width: '100%', height: 38, background: 'transparent', border: '1px solid #1f2a3c',
-                        borderRadius: 8, fontFamily: 'inherit', fontSize: 12, fontWeight: 600,
-                        color: '#9bea7c', cursor: 'pointer', marginTop: 6, transition: 'all .15s'
+                        width: '100%', height: 38, background: '#60bb44', border: '1px solid #1f2a3c',
+                        borderRadius: 8, fontFamily: 'inherit', fontSize: 16, fontWeight: 600,
+                        color: '#ffffff', cursor: 'pointer', marginTop: 6, transition: 'all .15s'
                     }}
                 >
                     Ignore
@@ -438,8 +438,7 @@ function ResultOverlay({ chosen, onRetry, onHome }) {
         <>
             <div style={{
                 padding: '22px 22px 18px', textAlign: 'center',
-                background: 'linear-gradient(135deg,#0a1e08,#112610)',
-                borderBottom: '1px solid rgba(93,190,58,.15)'
+                background: '#111620'
             }}>
                 <div style={{
                     width: 60, height: 60, borderRadius: '50%', display: 'flex',
@@ -711,18 +710,8 @@ export default function EsewaQr({ onHome = () => {} }) {
                                     </div>
                                     <p style={{ fontSize: 12, color: '#94a3b8', lineHeight: 1.65, marginBottom: 4 }}>
                                         Above are <strong style={{ color: '#e2e8f0' }}>3 QR codes</strong> — only <strong style={{ color: '#60bb46' }}>one is genuine</strong>.
-                                        Scammers often place fake QR stickers over real ones. Your job is to inspect each code's URL carefully and tap the one you trust.
+                                        Scammers often place fake QR stickers over real ones. Your job is to tap the one you trust.
                                     </p>
-                                    <div style={{
-                                        background: 'rgba(96,187,70,0.08)', border: '1px solid rgba(96,187,70,0.2)',
-                                        borderRadius: 8, padding: '8px 12px', fontSize: 11, color: '#86efac',
-                                        lineHeight: 1.6, marginBottom: 2
-                                    }}>
-                                        💡 <strong>Tip:</strong> Read the URL shown under each QR. Look for typos, extra hyphens, or unofficial domains — these are red flags.
-                                    </div>
-                                    <button className="tut-dismiss-btn" onClick={() => setShowTutorial(false)}>
-                                        Got it — let me try ✕
-                                    </button>
                                 </div>
                             </div>
                         )}
